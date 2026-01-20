@@ -1,0 +1,26 @@
+chatbot-project/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── dependencies.py
+│   ├── database.py
+│   ├── models.py
+│   ├── schemas.py           ← new (pydantic models)
+│   ├── auth.py
+│   ├── utils.py
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   ├── login.py
+│   │   ├── logout.py
+│   │   └── chatbot.py
+│   └── static/
+│       ├── css/
+│       ├── js/
+│       └── images/
+├── templates/
+│   └── login.html
+├── graphs/                  ← if you generate graphs
+├── .env                     ← important secrets!
+├── .gitignore
+├── requirements.txt
+└── README.md

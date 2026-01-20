@@ -1,0 +1,256 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Forecasting Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Sacramento&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/design.css">
+    <link rel="shortcut icon" href="static/images/utility.png" type="image/x-icon">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="static/images/utility.png" alt="Logo" />
+            <h1>Load Forecasting Chatbot</h1>
+        </div>
+
+        <div class="chat-box" id="chat-box"></div>
+
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ask me anything..." />
+            <button onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <script>
+        // Helper: Format text with line breaks and bold
+        function formatText(text) {
+            text = text.replace(/\n/g, '<br>');
+            text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            return text;
+        }
+
+        // Helper: Append message to the chat
+        function appendMessage(content, sender) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+            messageDiv.innerHTML = content;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Helper: Display an error
+        function displayError(errorMessage) {
+            appendMessage(`<span class="error">${errorMessage}</span>`, 'bot');
+        }
+
+        // Main: Send a message
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const question = userInput.value.trim();
+
+            if (!question) return;
+
+            appendMessage(question, 'user');
+            userInput.value = '';
+
+            appendMessage('<div class="loading-spinner"></div>', 'bot'); // Show spinner
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await response.json();
+                const chatBox = document.getElementById('chat-box');
+                chatBox.lastChild.remove(); // Remove spinner
+
+                if (response.ok) {
+                    if (Array.isArray(data.tableData) && data.tableData.length > 0) {
+                        displayTable(data.tableData);
+                    } else {
+                        appendMessage(formatText(data.response || "Sorry, I didn't understand that."), 'bot');
+                    }
+                } else {
+                    displayError(data.error || "An unexpected error occurred.");
+                }
+            } catch (error) {
+                displayError("Failed to connect to the server.");
+            }
+        }
+
+        // Enter key event listener
+        document.getElementById('user-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Forecasting Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Sacramento&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="../static/design.css">
+    <link rel="shortcut icon" href="../static/images/utility.png" type="image/x-icon"> -->
+
+    <link rel="stylesheet" href="../static/design.css">
+    <link rel="shortcut icon" href="../static/images/utility.png" type="image/x-icon">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="static/images/utility.png" alt="Logo" />
+            <h1>Load Forecasting Chatbot</h1>
+            
+            <!-- 🔹 User Dropdown with 👤 Icon -->
+            <div class="user-dropdown">
+                <div class="dropdown-toggle" onclick="toggleDropdown(event)">
+                    👤
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <div id="username-display">Loading...</div>
+                    <hr>
+                    <div onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </div>        
+    
+        <div class="chat-box" id="chat-box"></div>
+    
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ask me anything..." />
+            <button onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+    
+
+    <script>
+        // Helper: Format text with line breaks and bold
+        function formatText(text) {
+            text = text.replace(/\n/g, '<br>');
+            text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            return text;
+        }
+
+        // Helper: Append message to the chat
+        function appendMessage(content, sender) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+            messageDiv.innerHTML = content;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Helper: Display an error
+        function displayError(errorMessage) {
+            appendMessage(`<span class="error">${errorMessage}</span>`, 'bot');
+        }
+
+        // Display a graph
+        function displayGraph(graphUrl) {
+            const graphHtml = `
+                <div class="graph-container">
+                    <img src="${graphUrl}" alt="Generated Graph" class="graph">
+                </div>
+            `;
+            appendMessage(graphHtml, 'bot');
+        }
+
+        // Main: Send a message
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const question = userInput.value.trim();
+            const apiKey= 'itrduxhit6r5e43w4568yuhbv6iufhgrcmgdykjgffcjtfyuvlyfudjhgvcr44678tdjb'
+            if (!question) return;
+
+            appendMessage(question, 'user');
+            userInput.value = '';
+
+            appendMessage('<div class="loading-spinner"></div>', 'bot'); // Show spinner
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await response.json();
+                const chatBox = document.getElementById('chat-box');
+                chatBox.lastChild.remove(); // Remove spinner
+
+                if (response.ok) {
+                    if (data.graph_url) {
+                        appendMessage(formatText(data.response || "Here's your graph:"), 'bot');
+                        displayGraph(data.graph_url);
+                    } else {
+                        appendMessage(formatText(data.response || "Sorry, I didn't understand that."), 'bot');
+                    }
+                } else {
+                    displayError(data.error || "An unexpected error occurred.");
+                }
+            } catch (error) {
+                displayError("Failed to connect to the server.");
+            }
+        }
+
+        // Enter key event listener
+        document.getElementById('user-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') sendMessage();
+        });
+        // 🔹 Logout Function: Redirects to /logout
+
+        // Toggle dropdown menu on icon click
+        function toggleDropdown(event) {
+            event.stopPropagation(); // Prevent click from closing immediately
+            const menu = document.getElementById('dropdown-menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Fetch Username from Backend
+        async function fetchUsername() {
+            try {
+                const response = await fetch('/get_username'); // Replace with your actual API route
+                const data = await response.json();
+                document.getElementById('username-display').textContent = data.username || "Guest";
+            } catch (error) {
+                console.error("Error fetching username:", error);
+            }
+        }
+
+        // Logout function
+        function logout() {
+            window.location.href = "/logout"; // Redirect to logout route
+        }
+
+        // Hide dropdown when clicking outside
+        document.addEventListener("click", function(event) {
+            const dropdown = document.querySelector(".user-dropdown");
+            const menu = document.getElementById("dropdown-menu");
+
+            if (menu.style.display === 'block' && !dropdown.contains(event.target)) {
+                menu.style.display = "none";
+            }
+        });
+
+        // Call fetchUsername on page load
+        fetchUsername();
+
+
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
